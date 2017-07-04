@@ -40,7 +40,7 @@
       var option = document.createElement('option');
       option.textContent = voice.name + ' (' + voice.lang + ')';
 
-      if (voice == voices[76]) {
+      if (voice.voiceURI == 'Google UK English Female') {
         option.textContent += ' -- DEFAULT';
         option.setAttribute('selected', 'selected');
       }
