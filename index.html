@@ -5,11 +5,78 @@
   }
 
   textarea {
+    display: block;
     width: 300px;
     height: 300px;
+    margin: 0 auto;
+  }
+
+  select {
+    display: block;
+    margin: 20px auto 0;
+  }
+
+  button {
+    margin-top: 20px;
   }
 </style>
 
 <div class='container'>
   <textarea></textarea>
+  <select></select>
+  <button>Read It</button>
 </div>
+
+<script type="text/javascript">
+  var synth = window.speechSynthesis;
+  var text = document.querySelector('textarea');
+  var select = document.querySelector('select');
+  var button = document.querySelector('button');
+  var voices;
+
+  function populateVoiceList() {
+    voices = synth.getVoices();
+    voices.forEach(function(voice, index, collection) {
+      var option = document.createElement('option');
+      option.textContent = voice.name + ' (' + voice.lang + ')';
+
+      if (voice == voices[76]) {
+        option.textContent += ' -- DEFAULT';
+        option.setAttribute('selected', 'selected');
+      }
+
+      option.setAttribute('data-lang', voice.lang);
+      option.setAttribute('data-name', voice.name);
+
+      select.appendChild(option);
+    });
+  }
+
+  synth.onvoiceschanged = populateVoiceList;
+
+  populateVoiceList();
+
+
+  function sayIt() {
+    var utterThis = new SpeechSynthesisUtterance(text.value);
+    var selectedOption = select.selectedOptions[0].getAttribute('data-name');
+
+    for(i = 0; i < voices.length; i++) {
+      if (voices[i].name == selectedOption) {
+        utterThis.voice = voices[i];
+      }
+    }
+
+    synth.speak(utterThis);
+  }
+
+  button.onclick = function(e) {
+    sayIt();
+  }
+
+  text.onkeyup = function(e) {
+    if (e.keyCode == 13) {
+      sayIt();
+    }
+  }
+</script>
